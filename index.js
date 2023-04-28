@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 import { createWriteStream } from 'node:fs';
 import { mkdir } from 'node:fs/promises';
 import { get } from 'node:https';
@@ -5,6 +6,14 @@ import cheerio from 'cheerio';
 
 const websiteUrl = 'https://memegen-link-examples-upleveled.netlify.app/';
 const imagesUrls = [];
+
+const createFolder = async function () {
+  try {
+    await mkdir('./memes');
+  } catch (e) {
+    console.error(e);
+  }
+};
 
 async function imageDownload(url, path) {
   const file = createWriteStream(path);
@@ -23,7 +32,7 @@ get(websiteUrl, function (response) {
 
   response.on('end', function () {
     const $ = cheerio.load(data);
-    $('section img').each(function (i, el) {
+    $('section img').each(function (i) {
       if (i < 10) {
         const imageUrl = $(this).attr('src');
         imagesUrls.push(imageUrl);
