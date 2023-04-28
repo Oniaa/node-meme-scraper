@@ -6,7 +6,7 @@ import cheerio from 'cheerio';
 const websiteUrl = 'https://memegen-link-examples-upleveled.netlify.app/';
 const imagesUrls = [];
 
-// Creates a memes folder if it doesnt exist (important for replit since ./memes is in .gitignore)
+// Creates a memes folder if it doesnt exist otherwise it ignores it (important for replit since ./memes is in .gitignore)
 const createFolder = async function () {
   try {
     await mkdir('./memes');
@@ -36,8 +36,9 @@ get(websiteUrl, function (response) {
   response.on('end', function () {
     const $ = cheerio.load(data);
 
-    // Taking the first 10 indicator (Images) from the section element
-    // Put them through a Loop and pushes them into an Array
+    // Uses cheerio to search the section with the images
+    // Each of the first 10 src of the images is then put trough a loop and pushed onto to an array
+    // You probably dont need the array check later
     $('section img').each(async function (i, el) {
       if (i < 10) {
         const imageUrl = $(el).attr('src');
