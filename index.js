@@ -15,14 +15,14 @@ const createFolder = async function () {
   }
 };
 
-async function imageDownload(url, path) {
-  const file = createWriteStream(path);
+const imageDownload = async function (url, path) {
+  const imageFile = createWriteStream(path);
   const response = await new Promise((resolve, reject) => {
     get(url, resolve).on('error', reject);
   });
-  response.pipe(file);
+  response.pipe(imageFile);
   console.log('Image downloaded: ' + path);
-}
+};
 
 get(websiteUrl, function (response) {
   let data = '';
@@ -32,12 +32,12 @@ get(websiteUrl, function (response) {
 
   response.on('end', function () {
     const $ = cheerio.load(data);
-    $('section img').each(function (i) {
+    $('section img').each(async function (i, el) {
       if (i < 10) {
-        const imageUrl = $(this).attr('src');
+        const imageUrl = $(el).attr('src');
         imagesUrls.push(imageUrl);
         const name = `${(i + 1).toString().padStart(2, '0')}.jpg`;
-        imageDownload(imageUrl, `./memes/${name}`);
+        await imageDownload(imageUrl, `./memes/${name}`);
       }
     });
   });
