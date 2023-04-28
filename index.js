@@ -3,6 +3,9 @@ import { mkdir } from 'node:fs/promises';
 import { get } from 'node:https';
 import cheerio from 'cheerio';
 
+const websiteUrl = 'https://memegen-link-examples-upleveled.netlify.app/';
+const imagesUrls = [];
+
 async function imageDownload(url, path) {
   const file = createWriteStream(path);
   const response = await new Promise((resolve, reject) => {
@@ -12,7 +15,21 @@ async function imageDownload(url, path) {
   console.log('Image downloaded: ' + path);
 }
 
-imageDownload(
-  'https://api.memegen.link/images/bad/your_meme_is_bad/and_you_should_feel_bad.jpg?width=300',
-  './memes/01.jpg',
-);
+get(websiteUrl, function (response) {
+  let data = '';
+  response.on('data', function (chunk) {
+    data += chunk;
+  });
+
+  response.on('end', function () {
+    const $ = cheerio.load(data);
+    $('section img').each(function (i, el) {
+      if (i < 10) {
+        const imageUrl = $(this).attr('src');
+        imagesUrls.push(imageUrl);
+        const name = `${(i + 1).toString().padStart(2, '0')}.jpg`;
+        imageDownload(imageUrl, `./memes/${name}`);
+      }
+    });
+  });
+});
