@@ -1,19 +1,18 @@
-import { createWriteStream } from 'node:fs';
-import { mkdir } from 'node:fs/promises';
+import { createWriteStream, mkdir } from 'node:fs';
 import { get } from 'node:https';
 import cheerio from 'cheerio';
 
 const websiteUrl = 'https://memegen-link-examples-upleveled.netlify.app/';
 const imagesUrls = [];
 
-// Creates a memes folder if it doesnt exist otherwise it ignores it (important for replit since ./memes is in .gitignore)
-const createFolder = async function () {
+// Creates a memes folder if it doesnt exist otherwise it ignores it (important for Replit since ./memes is in .gitignore)
+async function createFolder() {
   try {
     await mkdir('./memes');
   } catch (e) {
     console.error(e);
   }
-};
+}
 
 // Downloads images using its url and saves it in designated path
 const imageDownload = async function (url, path) {
